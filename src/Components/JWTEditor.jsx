@@ -89,7 +89,7 @@ export default function JWTEditor() {
         />
       </div>
 
-      <div>
+      {/* <div>
         <label className="block text-sm mb-2">JWT Signature:</label>
         <textarea
           value={signature}
@@ -97,7 +97,7 @@ export default function JWTEditor() {
           className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-yellow-300 text-sm"
           rows={2}
         />
-      </div>
+      </div> */}
     </div>
   );
 }
