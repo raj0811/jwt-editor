@@ -8,11 +8,11 @@ export default function Navbar() {
         <li>
           <a href="/" className="hover:text-blue-400 transition duration-200">Home</a>
         </li>
-        <li>
+        {/* <li>
           <a href="/profile" className="hover:text-blue-400 transition duration-200">Profile</a>
-        </li>
+        </li> */}
         <li>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition duration-200">
+          <a href="https://github.com/raj0811/jwt-editor.git" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition duration-200">
             GitHub
           </a>
         </li>
