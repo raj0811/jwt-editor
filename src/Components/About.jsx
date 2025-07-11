@@ -30,9 +30,9 @@ export default function About() {
           <li><code>jose</code> (JWT signing/verification)</li>
         </ul>
 
-        <p className="mt-8 text-sm text-gray-400">
+        {/* <p className="mt-8 text-sm text-gray-400">
           Made with ❤️ by Raj
-        </p>
+        </p> */}
       </div>
     </div>
   );
