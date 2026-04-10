@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Copy, ImageIcon, FileText } from "lucide-react";
 
 export default function Base64Decoder() {
     const [mode, setMode] = useState("text");
@@ -7,15 +6,17 @@ export default function Base64Decoder() {
     const [output, setOutput] = useState("");
     const [imagePreview, setImagePreview] = useState(null);
 
+    // Encode Text
     const encodeBase64 = () => {
         try {
             const encoded = btoa(input);
             setOutput(encoded);
         } catch {
-            setOutput("Invalid input");
+            setOutput("Invalid Input");
         }
     };
 
+    // Decode Text
     const decodeBase64 = () => {
         try {
             const decoded = atob(input);
@@ -25,11 +26,19 @@ export default function Base64Decoder() {
         }
     };
 
+    // Copy Function
     const copyText = (text) => {
         navigator.clipboard.writeText(text);
     };
 
-    // Image to Base64
+    // Reset
+    const resetAll = () => {
+        setInput("");
+        setOutput("");
+        setImagePreview(null);
+    };
+
+    // Upload Image → Base64
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -44,13 +53,29 @@ export default function Base64Decoder() {
         reader.readAsDataURL(file);
     };
 
-    // Base64 to Image
+    // Base64 → Image
     const generateImage = () => {
-        setImagePreview(input);
+        let base64 = input.trim();
+
+        if (!base64) return;
+
+        // if already contains prefix
+        if (base64.startsWith("data:image")) {
+            setImagePreview(base64);
+            return;
+        }
+
+        try {
+            atob(base64);
+            setImagePreview(`data:image/png;base64,${base64}`);
+        } catch {
+            alert("Invalid Base64 Image");
+        }
     };
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-6 font-mono">
+
             <h2 className="text-2xl font-bold mb-6">
                 Base64 Encoder & Decoder
             </h2>
@@ -59,23 +84,21 @@ export default function Base64Decoder() {
             <div className="flex gap-4 mb-6">
                 <button
                     onClick={() => setMode("text")}
-                    className={`px-4 py-2 rounded flex items-center gap-2 ${mode === "text"
+                    className={`px-4 py-2 rounded ${mode === "text"
                         ? "bg-blue-600"
-                        : "bg-gray-700"
+                        : "bg-gray-700 hover:bg-gray-600"
                         }`}
                 >
-                    <FileText size={16} />
                     Text
                 </button>
 
                 <button
                     onClick={() => setMode("image")}
-                    className={`px-4 py-2 rounded flex items-center gap-2 ${mode === "image"
+                    className={`px-4 py-2 rounded ${mode === "image"
                         ? "bg-blue-600"
-                        : "bg-gray-700"
+                        : "bg-gray-700 hover:bg-gray-600"
                         }`}
                 >
-                    <ImageIcon size={16} />
                     Image
                 </button>
             </div>
@@ -85,28 +108,25 @@ export default function Base64Decoder() {
                 <>
                     {/* Input */}
                     <div className="mb-6">
-                        <label className="block text-sm mb-2">
+                        <label className="block mb-2">
                             Input Text / Base64
                         </label>
 
                         <div className="relative">
                             <textarea
                                 value={input}
-                                onChange={(e) =>
-                                    setInput(e.target.value)
-                                }
+                                onChange={(e) => setInput(e.target.value)}
                                 rows={8}
-                                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-green-300"
+                                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-green-300 custom-scrollbar"
+                                placeholder="Enter text or base64..."
                             />
 
                             {input && (
                                 <button
-                                    onClick={() =>
-                                        copyText(input)
-                                    }
+                                    onClick={() => copyText(input)}
                                     className="absolute top-2 right-2 text-gray-400 hover:text-white"
                                 >
-                                    <Copy size={18} />
+                                    Copy
                                 </button>
                             )}
                         </div>
@@ -116,22 +136,29 @@ export default function Base64Decoder() {
                     <div className="flex gap-4 mb-6">
                         <button
                             onClick={encodeBase64}
-                            className="bg-blue-600 px-6 py-2 rounded"
+                            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded"
                         >
                             Encode
                         </button>
 
                         <button
                             onClick={decodeBase64}
-                            className="bg-green-600 px-6 py-2 rounded"
+                            className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded"
                         >
                             Decode
+                        </button>
+
+                        <button
+                            onClick={resetAll}
+                            className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded"
+                        >
+                            Reset
                         </button>
                     </div>
 
                     {/* Output */}
                     <div>
-                        <label className="block text-sm mb-2">
+                        <label className="block mb-2">
                             Output
                         </label>
 
@@ -140,17 +167,15 @@ export default function Base64Decoder() {
                                 value={output}
                                 readOnly
                                 rows={8}
-                                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-yellow-300"
+                                className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-yellow-300 custom-scrollbar"
                             />
 
                             {output && (
                                 <button
-                                    onClick={() =>
-                                        copyText(output)
-                                    }
+                                    onClick={() => copyText(output)}
                                     className="absolute top-2 right-2 text-gray-400 hover:text-white"
                                 >
-                                    <Copy size={18} />
+                                    Copy
                                 </button>
                             )}
                         </div>
@@ -175,7 +200,7 @@ export default function Base64Decoder() {
                         />
                     </div>
 
-                    {/* Base64 */}
+                    {/* Base64 Input */}
                     <div className="mb-6">
                         <label className="block mb-2">
                             Base64 String
@@ -186,30 +211,39 @@ export default function Base64Decoder() {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 rows={10}
-                                className="w-full bg-gray-800 border border-gray-700 rounded text-green-300 custom-scrollbar p-10"
+                                className="w-full bg-gray-800 border border-gray-700 rounded text-green-300 p-3 custom-scrollbar"
+                                placeholder="Paste base64 or data:image/png;base64..."
                             />
 
                             {input && (
                                 <button
-                                    onClick={() =>
-                                        copyText(input)
-                                    }
-                                    className="absolute top-2 right-2"
+                                    onClick={() => copyText(input)}
+                                    className="absolute top-2 right-2 text-gray-400 hover:text-white"
                                 >
-                                    <Copy size={18} />
+                                    Copy
                                 </button>
                             )}
                         </div>
                     </div>
 
-                    <button
-                        onClick={generateImage}
-                        className="bg-blue-600 px-6 py-2 rounded mb-6"
-                    >
-                        Generate Image
-                    </button>
+                    {/* Buttons */}
+                    <div className="flex gap-4 mb-6">
+                        <button
+                            onClick={generateImage}
+                            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded"
+                        >
+                            Generate Image
+                        </button>
 
-                    {/* Preview */}
+                        <button
+                            onClick={resetAll}
+                            className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded"
+                        >
+                            Reset
+                        </button>
+                    </div>
+
+                    {/* Image Preview */}
                     {imagePreview && (
                         <div>
                             <label className="block mb-2">
